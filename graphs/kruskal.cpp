@@ -7,28 +7,27 @@
 
 #include "unionfind.h"
 
-using Graph = std::unordered_map<int,std::unordered_set<int>>;
-using Weights = std::unordered_map<int,std::unordered_map<int,int>>;
+using WeightedGraph = std::unordered_map<int,std::unordered_map<int,int>>;
 
 // Returns edges sorted
-std::set<std::tuple<int,int,int>> sortEdges(Graph& g, Weights& w)
+std::set<std::tuple<int,int,int>> sortEdges(WeightedGraph& g)
 {
 	std::set<std::tuple<int,int,int>> edges;
 
 	for(auto it = g.begin(); it != g.end(); it++)
 	{
 		int x = it->first;
-		for(int y : g[x])
-			edges.insert( { w[x][y] , x , y } );
+		for(auto [y,w] : g[x]) // visiting each neighbor y of x with edge weight w: (x)---w--->(y)
+			edges.insert( { w , x , y } );
 	}
 
 	return edges;
 }
 
 // Returns MST
-std::vector<std::pair<int,int>> kruskal(Graph& g, Weights& w)
+std::vector<std::pair<int,int>> kruskal(WeightedGraph& g)
 {
-	std::set<std::tuple<int,int,int>> edges = sortEdges(g, w);
+	std::set<std::tuple<int,int,int>> edges = sortEdges(g);
 
 	std::vector<std::pair<int,int>> mst;
 
@@ -45,20 +44,7 @@ enum Nodes{A,B,C,D,E,F,G,H,I};
 
 int main()
 {
-	Graph g =
-	{  
-		{A, {B,H} },
-		{B, {A,H,C} },
-		{C, {B,I,D,F}},
-		{D, {C,F,E}},
-		{E, {D,F}},
-		{F, {C,D,E,G}},
-		{G, {F,I,H}},
-		{H, {A,B,I,G}},
-		{I, {C,H,G}}
-	};
-
-	Weights w = 
+	WeightedGraph g = 
 	{
 		{A, {{B,4}, {H,8}} },
 		{B, {{A,4}, {H,11}, {C,8}} },
@@ -71,12 +57,12 @@ int main()
 		{I, {{C,2}, {H,7}, {G,6}} }
 	};
 
-	std::vector<std::pair<int,int>> mst = kruskal(g, w);
+	std::vector<std::pair<int,int>> mst = kruskal(g);
 
 	int sum = 0;
 
 	for(auto [u,v] : mst)
-		sum += w[u][v], std::cout << char(u + 'A')  << "," << char(v + 'A') << " " << w[u][v] << std::endl;
+		sum += g[u][v], std::cout << char(u + 'A')  << "," << char(v + 'A') << " " << g[u][v] << std::endl;
 
 	std::cout << "total: " << sum << std::endl;
 

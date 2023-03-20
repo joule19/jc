@@ -1,12 +1,14 @@
+#include <vector>
+#include <unordered_map>
+#include <iostream>
 
-#define INF 9999
+#define INF 99999
 
-using Graph = std::unordered_map<int,std::unordered_set<int>>;
-using Weights = std::unordered_map<int,std::unordered_map<int,int>>;
+using WeightedGraph = std::unordered_map<int,std::unordered_map<int,int>>;
 
 using Matrix = std::vector<std::vector<int>>;
 
-Matrix floydWarshall(Graph g, Weights w)
+Matrix floydWarshall(WeightedGraph& g)
 {
 	int n = g.size();
 
@@ -17,7 +19,7 @@ Matrix floydWarshall(Graph g, Weights w)
 			if(u == v)
 				d[u][v] = 0;
 			else if(g[u].find(v) != g[u].end())
-				d[u][v] = w[u][v];
+				d[u][v] = g[u][v]; // g[u][v] is the edge weight w (u)---w--->(v)
 		}
 	}
 
@@ -28,66 +30,27 @@ Matrix floydWarshall(Graph g, Weights w)
 	return d;
 }
 
+enum Nodes
+{
+	A,B,C,D,E
+};
+
 int main()
 {
-	Graph g = 
+
+	WeightedGraph g = 
 	{
-		{0, {1,2,3,4}},
-		{1, {3}},
-		{2, {3}},
-		{3, {4}},
-		{4, {}}
+		{A, { {B,1}, {C,1}, {D,6}, {E, 8} } },
+		{B, { {D,3} } },
+		{C, { {D,2} } },
+		{D, { {E,3} } },
+		{E, { 		} }
 	};
 
-	Weights w = 
-	{
-		{0, { {1,1}, {2,1}, {3,6}, {4, 8} } },
-		{1, { {3,3} } },
-		{2, { {3,2} } },
-		{3, { {4,3} } }
-	};
-
-	Matrix d = floydWarshall(g, w);
-	for(int i = 0; i < d.size(); i++)
-		
-
-	for(int d : distances)
-		std::cout << d << std::endl;
-
-	return 0;
-}
-
-nt main()
-{
-    Graph g = 
-  {
-    {0, {1,2,3,4}},
-    {1, {3}},
-    {2, {3}},
-    {3, {4}},
-    {4, {}}
-  };
-
-  Weights w = 
-  {
-    {0, { {1,1}, {2,1}, {3,6}, {4, 8} } },
-    {1, { {3,3} } },
-    {2, { {3,2} } },
-    {3, { {4,3} } }
-  };
-
-  //std::vector<int> distances = dijkstra(g, w, 0);
-//   for(int d : distances)
-//     std::cout << d << std::endl
-    vector<vector<int>> ans = floyd_warshall(g, w);
-    for(int i = 0; i < g.size(); i++)
-    {
-        for(int j = 0; j < g.size(); j++)
-        {
-            cout << ans[i][j] << " ";
-        }
-        cout << endl;
-    }
+    Matrix ans = floydWarshall(g);
+    for(int i = 0; i < ans.size(); i++)
+        for(int j = 0; j < ans.size(); j++)
+            std::cout << ans[i][j] << (j == g.size() - 1 ? '\n' : '\t');
 
     return 0;
 }

@@ -46,7 +46,7 @@ struct UnionFind // disjoint sets
 // Check number of connected components in a graph of n nodes
 int connComponents(int n, std::vector<std::pair<int,int>> edges)
 {
-	UnionFind s(n);
+	UnionFind s(n); // inside the data structure, we keep track of the number of disjoint sets
 
 	for(auto [u,v] : edges)
 		s.join(u,v);
